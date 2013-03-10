@@ -1,23 +1,15 @@
 ComputationalGeometry
 =====================
-Xavier Pinho <pg22577@alunos.uminho.pt>
-March 2013
+March 2013, Xavier Pinho <pg22577@alunos.uminho.pt>.
 
 Table of contents
 -----------------
 
-  - `point.{c,h}`
-    Representation of 2D points with integer coordinates.
-
-  - `polygon.{c,h}`
-    Polygon manipulation library.
-
-  - `triangulate.c`
-    Polygon triangulation in O(n^2).
-
+  - Representation of 2D points with integer coordinates. See `point.h`.
+  - Polygon manipulation library. See `polygon.h`.
+  - Polygon triangulation in O(n^2). See `triangulate.h`.
 
 References
 ----------
 
-  - Computational Geometry in C (2nd ed)
-    Joseph O'Rourke
+  - Computational Geometry in C (2nd ed), Joseph O'Rourke.
