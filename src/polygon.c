@@ -6,6 +6,7 @@
 
 struct PolygonVertex {
   struct Point Point;
+  PolygonVertex Meta;
   struct PolygonVertex * Next;
   struct PolygonVertex * Prev;
 };
@@ -50,16 +51,18 @@ PolygonVertex SomeVertex (const Polygon p) {
   return 0 < PolygonSize (p) ? p->Vertices : NULL;
 }
 
-PolygonVertex AppendVertex (Polygon p, const struct Point * pt) {
+PolygonVertex AppendVertexWithMeta (Polygon p, const struct Point * pt, PolygonVertexMeta * m) {
   PolygonVertex v = malloc (sizeof (struct PolygonVertex));
 
   if (NULL == v)
     return NULL;
 
   assert (NULL != pt);
+  assert (NULL != m);
 
   v->Point.x = pt->x;
   v->Point.y = pt->y;
+  v->Meta = *m;
 
   assert (NULL != p);
 
@@ -81,12 +84,31 @@ PolygonVertex AppendVertex (Polygon p, const struct Point * pt) {
   return v;
 }
 
+PolygonVertex AppendVertex (Polygon p, const struct Point * pt) {
+  PolygonVertexMeta n = NULL;
+  return AppendVertexWithMeta (p, pt, &n);
+}
+
 void VertexPoint (const PolygonVertex v, struct Point * pt) {
   assert (NULL != v);
   assert (NULL != pt);
 
   pt->x = v->Point.x;
   pt->y = v->Point.y;
+}
+
+void VertexMeta (const PolygonVertex v, PolygonVertexMeta * m) {
+  assert (NULL != v);
+  assert (NULL != m);
+
+  *m = v->Meta;
+}
+
+void UpdateVertexMeta (PolygonVertex v, PolygonVertexMeta * m) {
+  assert (NULL != v);
+  assert (NULL != m);
+
+  v->Meta = *m;
 }
 
 void RemoveVertex (Polygon p, PolygonVertex * v) {

@@ -1,15 +1,22 @@
 /*
   triangulate.c
-  2013-03-09 pg22577@alunos.uminho.pt
+  2013-03-10 pg22577@alunos.uminho.pt
 
   Purpose:
   - Perform polygon triangulation.
 
   Features:
-  - Complexity: O(n^3), where n is the total number of vertices.
+  - Complexity: O(n^2), where n is the total number of vertices.
 
   Details:
-  - Proceeds by ear removal, testing one vertex at a time.
+  - Proceeds by ear removal.
+  - Each vertex comprises meta information indicating if it is
+    an ear or not.
+  - Each time an ear is removed, it is only necessary to update 
+    its adjacent vertices earity status.
+  
+  Warnings:
+  - It is assumed that sizeof (void *) == sizeof (int).
 
   Reference:
   - Computational Geometry in C (2nd ed)
@@ -48,18 +55,51 @@ Polygon ReadPolygonFile (void) {
   return plg;
 }
 
+int EarityStatus (PolygonVertex v) {
+  PolygonVertexMeta e;
+  VertexMeta (v, &e);
+  return (int) e;
+}
+
+void UpdateEarityStatus (PolygonVertex v, int e) {
+  UpdateVertexMeta (v, (PolygonVertexMeta *) &e);
+}
+
+int CheckEarityStatus (Polygon p, PolygonVertex v) {
+  PolygonVertex a;
+  PolygonVertex b;
+  AdjacentVertices (v, &a, &b);
+  return IsDiagonal (p, a, b);
+}
+
+void MarkEars (Polygon p) {
+  PolygonVertex i = SomeVertex (p);
+  PolygonVertex v = i;
+  PolygonVertex a;
+
+  do {
+    UpdateEarityStatus (v, CheckEarityStatus (p, v));
+    AdjacentVertices (v, &a, &v);
+  } while (v != i);
+}
+
+
 int main (int argc, char ** argv) {
   Polygon p = ReadPolygonFile ();
   PolygonVertex a;
   PolygonVertex v = SomeVertex (p);
   PolygonVertex b;
 
+  MarkEars (p);
+
   do {
     AdjacentVertices (v, &a, &b);
 
-    if (IsDiagonal (p, a, b)) {
+    if (EarityStatus (v)) {
       PrintDiagonal (a, b);
       RemoveVertex (p, &v);
+      UpdateEarityStatus (a, CheckEarityStatus (p, a));
+      UpdateEarityStatus (b, CheckEarityStatus (p, b));
     }
 
     v = b;
