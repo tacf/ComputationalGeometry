@@ -7,7 +7,7 @@ Table of contents
 
   - Representation of 2D points with integer coordinates. See `point.h`.
   - Polygon manipulation library. See `polygon.h`.
-  - Polygon triangulation in O(n^2). See `triangulate.h`.
+  - Polygon triangulation in O(n^2). See `triangulate.c`.
 
 References
 ----------
