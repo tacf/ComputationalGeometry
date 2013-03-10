@@ -6,7 +6,7 @@
 
 struct PolygonVertex {
   struct Point Point;
-  PolygonVertex Meta;
+  PolygonVertexMeta Meta;
   struct PolygonVertex * Next;
   struct PolygonVertex * Prev;
 };
