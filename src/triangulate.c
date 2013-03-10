@@ -7,6 +7,7 @@
 
   Features:
   - Complexity: O(n^2), where n is the total number of vertices.
+  - (Optional) PostScript output. See PSOUTPUT.
 
   Details:
   - Proceeds by ear removal.
@@ -27,12 +28,51 @@
 #include "point.h"
 #include "polygon.h"
 
+/* Comment the following line to suppress PostScript output. */
+#define PSOUTPUT
+
+void PrintPolygon (const Polygon p) {
+  PolygonVertex i = SomeVertex (p);
+  PolygonVertex v = i;
+  PolygonVertex a;
+  struct Point pt;
+
+  VertexPoint (v, &pt);
+
+#ifndef PSOUTPUT
+  fprintf (stdout, "%d %d\n", pt.x, pt.y);
+#else
+  fprintf (stdout, "newpath\n%d %d moveto\n", pt.x, pt.y);
+#endif
+
+  do {
+    AdjacentVertices (v, &a, &v);
+    VertexPoint (v, &pt);
+
+#ifndef PSOUTPUT
+    fprintf (stdout, "%d %d\n", pt.x, pt.y);
+#else
+    fprintf (stdout, "%d %d lineto\n", pt.x, pt.y);
+#endif
+
+  } while (v != i);
+
+#ifdef PSOUTPUT
+  fprintf (stdout, "closepath stroke\n");
+#endif
+}
+
 void PrintDiagonal (const PolygonVertex a, const PolygonVertex b) {
   struct Point pta;
   struct Point ptb;
   VertexPoint (a, &pta);
   VertexPoint (b, &ptb);
+
+#ifdef PSOUTPUT
+  fprintf (stdout, "newpath\n%d %d moveto\n%d %d lineto\nclosepath stroke\n", pta.x, pta.y, ptb.x, ptb.y);
+#else
   fprintf (stdout, "%d %d %d %d\n", pta.x, pta.y, ptb.x, ptb.y);
+#endif
 }
 
 Polygon ReadPolygonFile (void) {
@@ -89,6 +129,12 @@ int main (int argc, char ** argv) {
   PolygonVertex a;
   PolygonVertex v = SomeVertex (p);
   PolygonVertex b;
+
+#ifdef PSOUTPUT
+  fprintf (stdout, "0.1 setlinewidth\n0 0 1 setrgbcolor\n");
+  PrintPolygon (p);
+  fprintf (stdout, "0.1 setlinewidth\n1 0 0 setrgbcolor\n");
+#endif
 
   MarkEars (p);
 
