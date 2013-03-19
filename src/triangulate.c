@@ -1,6 +1,6 @@
 /*
   triangulate.c
-  2013-03-10 pg22577@alunos.uminho.pt
+  2013-03-19 pg22577@alunos.uminho.pt
 
   Purpose:
   - Perform polygon triangulation.
@@ -85,7 +85,10 @@ Polygon ReadPolygonFile (void) {
   }
 
   while (EOF != scanf ("%d %d", &pt.x, &pt.y))
-    AppendVertex (plg, &pt);
+    if (NULL == AppendVertex (plg, &pt)) {
+      fprintf (stderr, "Error: not enough memory.\n");
+      exit (EXIT_FAILURE);
+    }
 
   if (3 > PolygonSize (plg)) {
     fprintf (stderr, "Error: not enough vertices (%d).\n", PolygonSize (plg));
