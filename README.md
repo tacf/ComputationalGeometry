@@ -16,6 +16,10 @@ See `src/polygon.h`.
 
 ### Polygon triangulation
 
+![o.18.ps](/doc/o.18.png "Screenshot")
+
+(`eg/i.18` was copied from [Ccode2.tar.gz] (http://cs.smith.edu/~orourke/CGCode/SecondEdition/Ccode2.tar.gz))
+
 Given is the **counterclockwise** sequence of vertices (one per line) that describe a simple polygon. Each vertex is represented by its coordinates. For instance (cf. `eg/i.18`):
 
     0	0
@@ -57,11 +61,15 @@ Output `n-3` (`n` being the number of vertices) *diagonals* (line segments betwe
 
 #### O(n^3) solution
 
-See `app/tri3.c`.
+See `app/tri3.c`. Usage example:
+    
+	./tri3 < ../eg/i.18 > o.18
 
 #### O(n^2) solution
 
-See `app/tri2.c`.
+See `app/tri2.c`. Usage example:
+
+    ./tri2 < ../eg/i.18 > o.18
 
 ## References
 
