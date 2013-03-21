@@ -37,7 +37,7 @@ Given is the **counterclockwise** sequence of vertices (one per line) that descr
     -2	9
      5	5
 
-Output `n-3` (`n` being the number of vertices) *diagonals* (line segments between two vertices) that witness a triangulation for such polygon. For instance:
+Output `n-3` (`n` being the number of vertices) *diagonals* that witness a triangulation for such polygon. For instance:
 
     5 5 10 7
     10 7 20 8
@@ -61,7 +61,7 @@ Output `n-3` (`n` being the number of vertices) *diagonals* (line segments betwe
 
 See `app/tri3.c`. Usage example:
     
-	./tri3 < ../eg/i.18
+    ./tri3 < ../eg/i.18
 
 #### O(n^2) solution
 
