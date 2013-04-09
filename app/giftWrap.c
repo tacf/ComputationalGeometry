@@ -15,6 +15,7 @@
 */
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "point.h"
 #include "polygon.h"
 
@@ -89,8 +90,20 @@ Polygon ReadPolygonFile (void) {
 }
 
 
+double TwoVectorAngle (PolygonVertex a, PolygonVertex b, PolygonVertex c) {
+  struct Point aP, bP, cP;
+  double v1, v2;
 
-PolygonVertex LeftmostPoint (Polygon p) {
+  VertexPoint(a, &aP);
+  VertexPoint(b, &bP);
+  VertexPoint(c, &cP);
+  v1 = (double)((aP.x - bP.x) + (aP.y - bP.y));
+  v2 = (double)((cP.x - bP.x) + (cP.y - bP.y));
+  return atan2(v1,v2);
+}
+
+
+PolygonVertex LowestPoint (Polygon p) {
   PolygonVertex i = SomeVertex (p);
   PolygonVertex v = i;
   PolygonVertex lm = i;
@@ -104,7 +117,7 @@ PolygonVertex LeftmostPoint (Polygon p) {
     AdjacentVertices (v, &a, &v);
     VertexPoint (v, &pt);
     
-    if (pt.x > ptLM.x) lm = v;
+    if (pt.y < ptLM.y) lm = v;
   } while (v != i);
   return lm;
 }
@@ -121,9 +134,14 @@ int main (int argc, char ** argv) {
   fprintf (stdout, "0.1 setlinewidth\n1 0 0 setrgbcolor\n");
 #endif
 
-  a = LeftmostPoint (p);
+  a = LowestPoint (p);
   VertexPoint (a, &lm);
-  printf("Leftmost Point: %d %d\n",lm.x, lm.y);
+  printf("Lowest Point (y axis): %d %d\n",lm.x, lm.y);
+
+  PolygonVertex b, c ;
+  AdjacentVertices(a, &b, &c);
+  double testAngle = TwoVectorAngle (b, a, c);
+  printf("Angle: %f\n", testAngle);
 
   return EXIT_SUCCESS;
 }
