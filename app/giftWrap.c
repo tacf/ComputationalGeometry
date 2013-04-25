@@ -15,7 +15,6 @@
 */
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include "point.h"
 #include "polygon.h"
 
@@ -90,19 +89,6 @@ Polygon ReadPolygonFile (void) {
 }
 
 
-double TwoVectorAngle (PolygonVertex a, PolygonVertex b, PolygonVertex c) {
-  struct Point aP, bP, cP;
-  double v1, v2;
-
-  VertexPoint(a, &aP);
-  VertexPoint(b, &bP);
-  VertexPoint(c, &cP);
-  v1 = (double)((aP.x - bP.x) + (aP.y - bP.y));
-  v2 = (double)((cP.x - bP.x) + (cP.y - bP.y));
-  return atan2(v1,v2);
-}
-
-
 PolygonVertex LowestPoint (Polygon p) {
   PolygonVertex i = SomeVertex (p);
   PolygonVertex v = i;
@@ -125,8 +111,13 @@ PolygonVertex LowestPoint (Polygon p) {
 
 int main (int argc, char ** argv) {
   Polygon p = ReadPolygonFile ();
-  PolygonVertex a;
-  struct Point lm;
+  PolygonVertex lowestVertex, 
+                prevVertex,
+                nextVertex, 
+                currentVertex,
+                nextHullVertex, 
+                dummyVertex;
+  Point a, b, c;
 
 #ifdef PSOUTPUT
   fprintf (stdout, "0.1 setlinewidth\n0 0 1 setrgbcolor\n");
@@ -134,14 +125,36 @@ int main (int argc, char ** argv) {
   fprintf (stdout, "0.1 setlinewidth\n1 0 0 setrgbcolor\n");
 #endif
 
-  a = LowestPoint (p);
-  VertexPoint (a, &lm);
-  printf("Lowest Point (y axis): %d %d\n",lm.x, lm.y);
+  a = (Point) malloc(sizeof(struct Point));
+  b = (Point) malloc(sizeof(struct Point));
+  c = (Point) malloc(sizeof(struct Point));
 
-  PolygonVertex b, c ;
-  AdjacentVertices(a, &b, &c);
-  double testAngle = TwoVectorAngle (b, a, c);
-  printf("Angle: %f\n", testAngle);
+  lowestVertex = LowestPoint (p);
+  VertexPoint (lowestVertex, a);
+  printf("Lowest Point (y axis): %d %d\n",a->x, a->y);
 
+  AdjacentVertices(lowestVertex, &dummyVertex, &nextVertex);
+  currentVertex = nextVertex;
+  AdjacentVertices (nextVertex, &prevVertex, &nextVertex);
+  
+  do {
+    while (nextVertex != currentVertex) {
+        VertexPoint (prevVertex,    a);
+        VertexPoint (currentVertex, b);
+        VertexPoint (nextVertex,    c);
+        if (AreaTriangle(a,b,c) < 0) {
+            currentVertex = nextVertex;
+            AdjacentVertices(currentVertex, &dummyVertex, &nextVertex);
+        } else {
+        AdjacentVertices(nextVertex, &dummyVertex, &nextVertex);
+        }   
+    }
+    printf("%d %d \n", b->x, b->y);
+    prevVertex = currentVertex;
+    AdjacentVertices(prevVertex, &dummyVertex, &currentVertex);
+    AdjacentVertices(currentVertex, &dummyVertex, &nextVertex);
+  } while ( nextVertex != lowestVertex); 
+  
+  
   return EXIT_SUCCESS;
 }
