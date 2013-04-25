@@ -115,7 +115,6 @@ int main (int argc, char ** argv) {
                 prevVertex,
                 nextVertex, 
                 currentVertex,
-                nextHullVertex, 
                 dummyVertex;
   Point a, b, c;
 
@@ -153,7 +152,7 @@ int main (int argc, char ** argv) {
     prevVertex = currentVertex;
     AdjacentVertices(prevVertex, &dummyVertex, &currentVertex);
     AdjacentVertices(currentVertex, &dummyVertex, &nextVertex);
-  } while ( nextVertex != lowestVertex); 
+  } while ( prevVertex != lowestVertex); 
   
   
   return EXIT_SUCCESS;
