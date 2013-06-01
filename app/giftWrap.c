@@ -41,6 +41,26 @@ PolygonVertex LowestPoint (Polygon p) {
   return lm;
 }
 
+/* For ps translate purpose */
+PolygonVertex LowestXPoint (Polygon p) {
+  PolygonVertex i = SomeVertex (p);
+  PolygonVertex v = i;
+  PolygonVertex lm = i;
+  PolygonVertex a;
+  struct Point ptLM, pt;
+
+  VertexPoint (v, &pt);
+  VertexPoint (v, &ptLM);
+
+  do {
+    AdjacentVertices (v, &a, &v);
+    VertexPoint (v, &pt);
+    
+    if (pt.x < ptLM.x) lm = v;
+  } while (v != i);
+  return lm;
+}
+
 void PrintLine (const PolygonVertex a, const PolygonVertex b) {
   struct Point pta;
   struct Point ptb;
@@ -57,18 +77,31 @@ void PrintLine (const PolygonVertex a, const PolygonVertex b) {
 void PrintPolygon (const Polygon p) {
   PolygonVertex i = SomeVertex (p);
   PolygonVertex v = i;
-  PolygonVertex a, lp;
+  PolygonVertex a, b, lp;
   PolygonVertexMeta m;
+  int tx, ty; /* translate figure*/
   struct Point pt;
 
   VertexPoint (v, &pt);
-
+  
+  a = LowestPoint(p);
+  VertexPoint (a, &pt);
+  ty = pt.y;
+  b = LowestXPoint(p);
+  VertexPoint (b, &pt);
+  tx = pt.x;
+  
+  if (ty < 0) ty = ty * (-1);
+  if (tx < 0) tx = tx * (-1);
+  
 #ifndef PSOUTPUT
   fprintf (stdout, "%d %d\n", pt.x, pt.y);
 #else
   fprintf (stdout, ".00 .00 setlinewidth\n0 0 1 setrgbcolor\n");
+  fprintf (stdout, "%d %d translate\n", tx+10, ty+10);
   fprintf (stdout, "newpath\n");
 #endif
+
 
   /* Draw Circles around Points or Output Points*/
   do {
@@ -90,7 +123,6 @@ void PrintPolygon (const Polygon p) {
 
 
   /* Draw Hull */
-  a = LowestPoint(p);
   lp = a;
   do {
     VertexMeta(a, &m);
